@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { eTicketSchema, type ETicketData, getUniqueId } from "@/lib/schemas";
 import ETicketForm from "@/components/eticket-form";
 import ETicketPreview from "@/components/eticket-preview";
-import { Button } from "@/components/ui/button";
-import { Printer, Plane } from "lucide-react";
+import { Plane } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import PrintButton from "./print-button";
 
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
@@ -51,10 +51,6 @@ export default function ETicketManager() {
     defaultValues,
   });
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   if (!isClient) {
     return null;
   }
@@ -69,10 +65,7 @@ export default function ETicketManager() {
               LaVicel Travel and Tours eTicket
             </h1>
           </div>
-          <Button onClick={handlePrint} variant="default" size="lg">
-            <Printer className="mr-2 h-5 w-5" />
-            Print Receipt
-          </Button>
+          <PrintButton />
         </header>
         <div className="grid lg:grid-cols-2 lg:gap-12">
           <div className="no-print">
