@@ -27,3 +27,6 @@ export const eTicketSchema = z.object({
 
 export type ETicketData = z.infer<typeof eTicketSchema>;
 export type ItineraryItemData = z.infer<typeof itineraryItemSchema>;
+
+let nextId = 0;
+export const getUniqueId = () => `id-${nextId++}`;

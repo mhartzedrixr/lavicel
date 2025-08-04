@@ -14,6 +14,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { X, Plus } from "lucide-react";
 import type { ETicketData } from "@/lib/schemas";
+import { getUniqueId } from "@/lib/schemas";
 import { Textarea } from "./ui/textarea";
 
 export default function ETicketForm() {
@@ -116,7 +117,7 @@ export default function ETicketForm() {
               size="sm"
               onClick={() =>
                 append({
-                  id: new Date().getTime().toString(),
+                  id: getUniqueId(),
                   date: "",
                   city: "",
                   flight: "",

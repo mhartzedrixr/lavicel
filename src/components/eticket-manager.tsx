@@ -2,7 +2,7 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { eTicketSchema, type ETicketData } from "@/lib/schemas";
+import { eTicketSchema, type ETicketData, getUniqueId } from "@/lib/schemas";
 import ETicketForm from "@/components/eticket-form";
 import ETicketPreview from "@/components/eticket-preview";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ const defaultValues: ETicketData = {
   referenceNumber: "ABCDEF",
   itinerary: [
     {
-      id: "1",
+      id: getUniqueId(),
       date: "26JUL / 10:00",
       city: "NEW YORK / JFK",
       flight: "LV 123 / Y",
@@ -26,7 +26,7 @@ const defaultValues: ETicketData = {
       remarks: "NON-STOP",
     },
      {
-      id: "2",
+      id: getUniqueId(),
       date: "26JUL / 18:30",
       city: "PARIS / CDG",
       flight: "LV 123 / Y",
