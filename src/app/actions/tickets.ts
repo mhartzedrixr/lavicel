@@ -1,6 +1,7 @@
+
 'use server';
 
-import {initializeApp, getApps, cert} from 'firebase-admin/app';
+import {initializeApp, getApps, cert, App} from 'firebase-admin/app';
 import {getFirestore} from 'firebase-admin/firestore';
 import {eTicketSchema, type ETicketData} from '@/lib/schemas';
 import { getAuth } from 'firebase-admin/auth';
@@ -9,22 +10,34 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
   ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
   : undefined;
 
+let adminApp: App;
+
 if (getApps().length === 0) {
-  initializeApp({
-    credential: serviceAccount && cert(serviceAccount),
-  });
+  if (serviceAccount) {
+    adminApp = initializeApp({
+      credential: cert(serviceAccount),
+    });
+  } else {
+    // This will run on Vercel/Firebase Hosting if the env var is set there
+    adminApp = initializeApp();
+  }
+} else {
+  adminApp = getApps()[0];
 }
 
-const db = getFirestore();
+
+const db = getFirestore(adminApp);
+const authAdmin = getAuth(adminApp);
 
 async function getUserId(idToken: string) {
   if (!idToken) {
     throw new Error('User not authenticated');
   }
   try {
-    const decodedToken = await getAuth().verifyIdToken(idToken);
+    const decodedToken = await authAdmin.verifyIdToken(idToken);
     return decodedToken.uid;
   } catch (error) {
+    console.error("Error verifying token: ", error);
     throw new Error('Invalid auth token');
   }
 }
