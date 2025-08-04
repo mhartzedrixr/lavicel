@@ -53,12 +53,9 @@ export async function createUser(uid: string, email: string | null) {
 
 export async function saveTicket(ticketData: ETicketData, idToken: string) {
   const userId = await getUserId(idToken);
+  // The userId from the token is the source of truth.
   const parsedData = eTicketSchema.parse({ ...ticketData, userId });
   
-  if (parsedData.userId !== userId) {
-      throw new Error("User ID mismatch");
-  }
-
   await db.collection('tickets').add(parsedData);
 }
 

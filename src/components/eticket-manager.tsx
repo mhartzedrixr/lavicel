@@ -65,8 +65,9 @@ export default function ETicketManager() {
       setIsSaving(true);
       const data = methods.getValues();
       try {
-        const idToken = await user.getIdToken();
-        await saveTicket({ ...data, userId: user.uid }, idToken);
+        // Force refresh the token to ensure it's valid
+        const idToken = await user.getIdToken(true);
+        await saveTicket(data, idToken);
         toast({
           title: "Success",
           description: "Ticket saved successfully.",
