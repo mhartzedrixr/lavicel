@@ -10,10 +10,12 @@ import {Label} from '@/components/ui/label';
 import {Card, CardHeader, CardTitle, CardContent, CardFooter} from '@/components/ui/card';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -24,6 +26,7 @@ export default function LoginPage() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/');
@@ -33,6 +36,8 @@ export default function LoginPage() {
         title: 'Login Failed',
         description: error.message,
       });
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -56,6 +61,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -66,9 +72,11 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Login
             </Button>
           </form>

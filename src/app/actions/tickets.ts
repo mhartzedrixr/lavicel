@@ -50,3 +50,20 @@ export async function getTickets(idToken: string): Promise<(ETicketData & {id: s
 
   return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as ETicketData & {id: string}));
 }
+
+export async function deleteTicket(ticketId: string, idToken: string) {
+    const userId = await getUserId(idToken);
+    const ticketRef = db.collection('tickets').doc(ticketId);
+    const doc = await ticketRef.get();
+
+    if (!doc.exists) {
+        throw new Error("Ticket not found");
+    }
+
+    const ticketData = doc.data();
+    if (ticketData?.userId !== userId) {
+        throw new Error("Permission denied. You can only delete your own tickets.");
+    }
+
+    await ticketRef.delete();
+}

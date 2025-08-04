@@ -10,12 +10,14 @@ import {Label} from '@/components/ui/label';
 import {Card, CardHeader, CardTitle, CardContent, CardFooter} from '@/components/ui/card';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -34,15 +36,22 @@ export default function SignupPage() {
       });
       return;
     }
+    setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      router.push('/');
+      toast({
+        title: 'Success',
+        description: 'Account created successfully! Please log in.',
+      });
+      router.push('/login');
     } catch (error: any) {
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
         description: error.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -66,6 +75,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -76,6 +86,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -86,9 +97,11 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign Up
             </Button>
           </form>
