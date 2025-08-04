@@ -34,9 +34,13 @@ async function getUserId(idToken: string) {
     throw new Error('User not authenticated');
   }
   try {
-    const decodedToken = await authAdmin.verifyIdToken(idToken);
+    const checkRevoked = true;
+    const decodedToken = await authAdmin.verifyIdToken(idToken, checkRevoked);
     return decodedToken.uid;
-  } catch (error) {
+  } catch (error: any) {
+     if (error.code === 'auth/id-token-expired') {
+      throw new Error('Auth token expired. Please log in again.');
+    }
     console.error("Error verifying token: ", error);
     throw new Error('Invalid auth token');
   }
