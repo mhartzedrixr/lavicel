@@ -41,6 +41,7 @@ async function handle(req: Request, { params }: { params: { action: string } }) 
         }
 
     } catch (error: any) {
+        console.error(`Error in action '${action}':`, error);
         return NextResponse.json({ error: error.message || 'An internal server error occurred' }, { status: 500 });
     }
 }

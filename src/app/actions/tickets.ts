@@ -8,22 +8,24 @@ import { getAuth } from 'firebase-admin/auth';
 
 const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
 
-if (!serviceAccountString) {
-  throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
-}
-
-const serviceAccount = JSON.parse(serviceAccountString);
-
 let adminApp: App;
 
 if (getApps().length === 0) {
-    adminApp = initializeApp({
-      credential: cert(serviceAccount),
-    });
+  if (!serviceAccountString) {
+    console.error('FIREBASE_SERVICE_ACCOUNT environment variable is not set. Service account initialization failed.');
+  } else {
+    try {
+      const serviceAccount = JSON.parse(serviceAccountString);
+      adminApp = initializeApp({
+        credential: cert(serviceAccount),
+      });
+    } catch (e: any) {
+       console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT or initialize app:', e.message);
+    }
+  }
 } else {
   adminApp = getApps()[0];
 }
-
 
 const db = getFirestore(adminApp);
 const authAdmin = getAuth(adminApp);
