@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Download } from "lucide-react";
 
 export default function PrintButton() {
     const handlePrint = () => {
@@ -10,8 +10,8 @@ export default function PrintButton() {
 
     return (
         <Button onClick={handlePrint} variant="default" size="lg">
-            <Printer className="mr-2 h-5 w-5" />
-            Print Receipt
+            <Download className="mr-2 h-5 w-5" />
+            Download Receipt
         </Button>
     );
 }
