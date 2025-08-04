@@ -1,7 +1,7 @@
+
 'use client';
 
 import {useEffect, useState} from 'react';
-import {deleteTicket, getTickets} from '@/app/actions/tickets';
 import type {ETicketData} from '@/lib/schemas';
 import {useAuth} from '@/lib/auth';
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
@@ -21,6 +21,25 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+async function fetchApi(action: string, idToken: string, body?: any) {
+    const res = await fetch(`/api/actions/${action}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'API request failed');
+    }
+
+    return res.json();
+}
+
+
 export default function BookingsClient() {
   const [tickets, setTickets] = useState<(ETicketData & {id: string})[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,11 +51,17 @@ export default function BookingsClient() {
     if (user) {
       try {
         setLoading(true);
-        const idToken = await user.getIdToken();
-        const fetchedTickets = await getTickets(idToken);
+        setError(null);
+        const idToken = await user.getIdToken(true);
+        const { tickets: fetchedTickets } = await fetchApi('getTickets', idToken);
         setTickets(fetchedTickets);
       } catch (err: any) {
         setError(err.message);
+        toast({
+            variant: 'destructive',
+            title: 'Error fetching tickets',
+            description: err.message,
+        });
       } finally {
         setLoading(false);
       }
@@ -50,14 +75,14 @@ export default function BookingsClient() {
   const handleDelete = async (ticketId: string) => {
     if(user) {
         try {
-            const idToken = await user.getIdToken();
-            await deleteTicket(ticketId, idToken);
+            const idToken = await user.getIdToken(true);
+            await fetchApi('deleteTicket', idToken, { ticketId });
             toast({
                 title: 'Success',
                 description: 'Ticket deleted successfully.',
             });
             // Refresh the list of tickets
-            fetchTickets();
+            await fetchTickets();
         } catch (err: any) {
             toast({
                 variant: 'destructive',

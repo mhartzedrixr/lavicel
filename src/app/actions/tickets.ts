@@ -6,9 +6,13 @@ import {getFirestore} from 'firebase-admin/firestore';
 import {eTicketSchema, type ETicketData} from '@/lib/schemas';
 import { getAuth } from 'firebase-admin/auth';
 
-const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
-  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
-  : undefined;
+const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+if (!serviceAccountString) {
+  throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+}
+
+const serviceAccount = JSON.parse(serviceAccountString);
 
 let adminApp: App;
 
@@ -24,9 +28,9 @@ if (getApps().length === 0) {
 const db = getFirestore(adminApp);
 const authAdmin = getAuth(adminApp);
 
-async function getUserId(idToken: string) {
+export async function getUserIdFromToken(idToken: string) {
   if (!idToken) {
-    throw new Error('User not authenticated');
+    throw new Error('Auth token not provided');
   }
   try {
     const decodedToken = await authAdmin.verifyIdToken(idToken);
@@ -35,9 +39,6 @@ async function getUserId(idToken: string) {
      if (error.code === 'auth/id-token-expired') {
       throw new Error('Auth token expired. Please log in again.');
     }
-     if (error.code === 'auth/argument-error') {
-        throw new Error('Invalid auth token');
-     }
     console.error("Error verifying token: ", error);
     throw new Error('Invalid auth token');
   }
@@ -51,16 +52,15 @@ export async function createUser(uid: string, email: string | null) {
   });
 }
 
-export async function saveTicket(ticketData: ETicketData, idToken: string) {
-  const userId = await getUserId(idToken);
+export async function saveTicket(ticketData: ETicketData, userId: string) {
   // The userId from the token is the source of truth.
   const parsedData = eTicketSchema.parse({ ...ticketData, userId });
   
   await db.collection('tickets').add(parsedData);
+  return { success: true };
 }
 
-export async function getTickets(idToken: string): Promise<(ETicketData & {id: string})[]> {
-  const userId = await getUserId(idToken);
+export async function getTickets(userId: string): Promise<(ETicketData & {id: string})[]> {
   const snapshot = await db.collection('tickets').where('userId', '==', userId).get();
   
   if (snapshot.empty) {
@@ -70,8 +70,7 @@ export async function getTickets(idToken: string): Promise<(ETicketData & {id: s
   return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as ETicketData & {id: string}));
 }
 
-export async function deleteTicket(ticketId: string, idToken: string) {
-    const userId = await getUserId(idToken);
+export async function deleteTicket(ticketId: string, userId: string) {
     const ticketRef = db.collection('tickets').doc(ticketId);
     const doc = await ticketRef.get();
 
@@ -85,4 +84,5 @@ export async function deleteTicket(ticketId: string, idToken: string) {
     }
 
     await ticketRef.delete();
+    return { success: true };
 }
