@@ -2,8 +2,13 @@ import { z } from "zod";
 
 export const itineraryItemSchema = z.object({
   id: z.string(),
-  date: z.string().min(1, "Date/Time is required"),
-  city: z.string().min(1, "City/Airport is required"),
+  date: z.string().min(1, "Date is required"),
+  fromCity: z.string().min(1, "Departure city is required"),
+  fromAirport: z.string().min(1, "Departure airport is required"),
+  departureTime: z.string().min(1, "Departure time is required"),
+  toCity: z.string().min(1, "Arrival city is required"),
+  toAirport: z.string().min(1, "Arrival airport is required"),
+  arrivalTime: z.string().min(1, "Arrival time is required"),
   flight: z.string().min(1, "Flight/Class is required"),
   seat: z.string().optional(),
   status: z.string().min(1, "Status is required"),
@@ -29,4 +34,4 @@ export type ETicketData = z.infer<typeof eTicketSchema>;
 export type ItineraryItemData = z.infer<typeof itineraryItemSchema>;
 
 let nextId = 0;
-export const getUniqueId = () => `id-${nextId++}`;
+export const getUniqueId = () => `id-${nextId++}`

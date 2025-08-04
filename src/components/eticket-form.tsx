@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -119,7 +119,12 @@ export default function ETicketForm() {
                 append({
                   id: getUniqueId(),
                   date: "",
-                  city: "",
+                  fromCity: "",
+                  fromAirport: "",
+                  departureTime: "",
+                  toCity: "",
+                  toAirport: "",
+                  arrivalTime: "",
                   flight: "",
                   seat: "",
                   status: "CONFIRMED",
@@ -136,35 +141,30 @@ export default function ETicketForm() {
                 key={field.id}
                 className="p-4 border rounded-lg space-y-4 relative bg-background/50"
               >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2 text-muted-foreground hover:text-destructive"
+                  onClick={() => remove(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name={`itinerary.${index}.date`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Date/Time</FormLabel>
+                        <FormLabel>Date</FormLabel>
                         <FormControl>
-                          <Input placeholder="26JUL / 10:00" {...field} />
+                          <Input placeholder="26JUL" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name={`itinerary.${index}.city`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City/Airport</FormLabel>
-                        <FormControl>
-                          <Input placeholder="NEW YORK / JFK" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name={`itinerary.${index}.flight`}
@@ -178,6 +178,99 @@ export default function ETicketForm() {
                       </FormItem>
                     )}
                   />
+                </div>
+                
+                <div className="p-2 border rounded-md">
+                  <p className="text-sm font-medium mb-2">Departure</p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`itinerary.${index}.fromCity`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <FormControl>
+                            <Input placeholder="New York" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`itinerary.${index}.fromAirport`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Airport</FormLabel>
+                          <FormControl>
+                            <Input placeholder="JFK" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`itinerary.${index}.departureTime`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Time</FormLabel>
+                          <FormControl>
+                            <Input placeholder="10:00" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="p-2 border rounded-md">
+                   <p className="text-sm font-medium mb-2">Arrival</p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`itinerary.${index}.toCity`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Paris" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`itinerary.${index}.toAirport`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Airport</FormLabel>
+                          <FormControl>
+                            <Input placeholder="CDG" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`itinerary.${index}.arrivalTime`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Time</FormLabel>
+                          <FormControl>
+                            <Input placeholder="22:00" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name={`itinerary.${index}.seat`}
@@ -218,15 +311,6 @@ export default function ETicketForm() {
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2 text-muted-foreground hover:text-destructive"
-                  onClick={() => remove(index)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
               </div>
             ))}
           </CardContent>

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import type { ETicketData } from "@/lib/schemas";
-import { Plane } from "lucide-react";
+import { Plane, ArrowRight } from "lucide-react";
 
 export default function ETicketPreview() {
   const { watch } = useFormContext<ETicketData>();
@@ -55,18 +55,33 @@ export default function ETicketPreview() {
           <h3 className="text-lg font-headline font-semibold text-primary mb-3">Itinerary</h3>
           <div className="space-y-4">
             {data.itinerary?.map((item, index) => (
-              <div key={item.id || index} className="grid grid-cols-[1fr_2fr] gap-x-4 p-3 rounded-lg bg-muted/30">
-                <div className="border-r pr-4">
-                  <DetailItem label="Date & Time" value={item.date} />
-                  <DetailItem label="Status" value={item.status} />
+              <div key={item.id || index} className="p-3 rounded-lg bg-muted/30 space-y-3">
+                <div className="flex justify-between items-center">
+                   <DetailItem label="Date" value={item.date} />
+                   <DetailItem label="Flight" value={item.flight} />
                 </div>
-                <div>
-                  <DetailItem label="From / To" value={item.city} />
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    <DetailItem label="Flight / Class" value={item.flight} />
+                <div className="flex items-center justify-between gap-2">
+                    <div className="text-center">
+                        <p className="font-bold text-lg">{item.fromAirport}</p>
+                        <p className="text-sm text-muted-foreground">{item.fromCity}</p>
+                        <p className="text-sm font-mono">{item.departureTime}</p>
+                    </div>
+                    <div className="flex-grow flex justify-center items-center">
+                        <Separator className="w-8" />
+                        <Plane className="h-4 w-4 text-muted-foreground mx-2" />
+                        <Separator className="flex-grow" />
+                    </div>
+                    <div className="text-center">
+                        <p className="font-bold text-lg">{item.toAirport}</p>
+                        <p className="text-sm text-muted-foreground">{item.toCity}</p>
+                        <p className="text-sm font-mono">{item.arrivalTime}</p>
+                    </div>
+                </div>
+                <Separator />
+                <div className="grid grid-cols-3 gap-2 text-center text-xs">
                     <DetailItem label="Seat" value={item.seat} />
-                  </div>
-                  <DetailItem label="Remarks" value={item.remarks} />
+                    <DetailItem label="Status" value={item.status} />
+                    <DetailItem label="Remarks" value={item.remarks} />
                 </div>
               </div>
             ))}
