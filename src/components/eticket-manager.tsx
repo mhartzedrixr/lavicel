@@ -8,11 +8,12 @@ import ETicketPreview from "@/components/eticket-preview";
 import { Plane } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import PrintButton from "./print-button";
+import Image from "next/image";
 
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
   ticketNumber: "123-4567890123",
-  airline: "LAVICEL TRAVEL AND TOURS",
+  airline: "LaVicel Travel and Tours",
   ticketingInfo: "ONLINE/25JUL24",
   referenceNumber: "ABCDEF",
   itinerary: [
@@ -60,7 +61,14 @@ export default function ETicketManager() {
       <div className="container mx-auto p-4 md:p-8">
         <header className="mb-8 flex justify-between items-center no-print">
           <div className="flex items-center gap-3">
-            <Plane className="h-8 w-8 text-primary" />
+            <Image 
+              src="https://placehold.co/40x40.png"
+              alt="Company Logo"
+              width={40}
+              height={40}
+              className="rounded-full"
+              data-ai-hint="logo"
+            />
             <h1 className="text-2xl md:text-3xl font-bold font-headline text-primary">
               LaVicel Travel and Tours eTicket
             </h1>

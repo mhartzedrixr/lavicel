@@ -10,6 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import type { ETicketData } from "@/lib/schemas";
 import { Plane } from "lucide-react";
+import Image from "next/image";
 
 export default function ETicketPreview() {
   const { watch } = useFormContext<ETicketData>();
@@ -27,10 +28,17 @@ export default function ETicketPreview() {
     <Card className="print-receipt font-body shadow-lg rounded-xl overflow-hidden border-primary/20">
       <CardHeader className="bg-primary/5 p-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Plane className="h-6 w-6 text-primary" />
+          <div className="flex items-center gap-3">
+             <Image 
+              src="https://placehold.co/32x32.png"
+              alt="Company Logo"
+              width={32}
+              height={32}
+              className="rounded-full"
+              data-ai-hint="logo"
+            />
             <span className="font-headline text-xl font-bold text-primary">
-              {data.airline || "LAVICEL TRAVEL AND TOURS"}
+              {data.airline || "LaVicel Travel and Tours"}
             </span>
           </div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
