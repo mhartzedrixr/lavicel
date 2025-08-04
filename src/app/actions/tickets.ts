@@ -1,34 +1,8 @@
 
 'use server';
 
-import {initializeApp, getApps, cert, App} from 'firebase-admin/app';
-import {getFirestore} from 'firebase-admin/firestore';
-import {eTicketSchema, type ETicketData} from '@/lib/schemas';
-import { getAuth } from 'firebase-admin/auth';
-
-const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
-
-let adminApp: App;
-
-if (getApps().length === 0) {
-  if (!serviceAccountString) {
-    console.error('FIREBASE_SERVICE_ACCOUNT environment variable is not set. Service account initialization failed.');
-  } else {
-    try {
-      const serviceAccount = JSON.parse(serviceAccountString);
-      adminApp = initializeApp({
-        credential: cert(serviceAccount),
-      });
-    } catch (e: any) {
-       console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT or initialize app:', e.message);
-    }
-  }
-} else {
-  adminApp = getApps()[0];
-}
-
-const db = getFirestore(adminApp);
-const authAdmin = getAuth(adminApp);
+import { eTicketSchema, type ETicketData } from '@/lib/schemas';
+import { db, authAdmin } from '@/lib/firebase-admin';
 
 export async function getUserIdFromToken(idToken: string) {
   if (!idToken) {
@@ -55,9 +29,7 @@ export async function createUser(uid: string, email: string | null) {
 }
 
 export async function saveTicket(ticketData: ETicketData, userId: string) {
-  // The userId from the token is the source of truth.
   const parsedData = eTicketSchema.parse({ ...ticketData, userId });
-  
   await db.collection('tickets').add(parsedData);
   return { success: true };
 }
