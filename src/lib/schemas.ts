@@ -16,7 +16,6 @@ export const itineraryItemSchema = z.object({
 });
 
 export const eTicketSchema = z.object({
-  userId: z.string().optional(),
   passengerName: z.string().min(1, "Passenger name is required"),
   ticketNumber: z.string().min(1, "Ticket number is required"),
   airline: z.string().min(1, "Airline is required"),

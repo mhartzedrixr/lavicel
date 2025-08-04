@@ -9,11 +9,6 @@ import ETicketPreview from "@/components/eticket-preview";
 import React, { useState, useEffect } from "react";
 import PrintButton from "./print-button";
 import Image from "next/image";
-import { Button } from "./ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/lib/auth";
-import { Save, Loader2 } from "lucide-react";
-
 
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
@@ -45,29 +40,9 @@ const defaultValues: ETicketData = {
   endorsements: "NON-REF/NON-END/CHG FEE",
 };
 
-async function fetchApi(action: string, idToken: string, body?: any) {
-    const res = await fetch(`/api/actions/${action}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${idToken}`,
-        },
-        body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'API request failed');
-    }
-
-    return res.json();
-}
 
 export default function ETicketManager() {
   const [isClient, setIsClient] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const { toast } = useToast();
-  const { user } = useAuth();
 
   useEffect(() => {
     setIsClient(true);
@@ -77,30 +52,6 @@ export default function ETicketManager() {
     resolver: zodResolver(eTicketSchema),
     defaultValues,
   });
-
-  const handleSaveTicket = async () => {
-    const isValid = await methods.trigger();
-    if (isValid && user) {
-      setIsSaving(true);
-      const data = methods.getValues();
-      try {
-        const idToken = await user.getIdToken(true);
-        await fetchApi('saveTicket', idToken, { ticketData: data });
-        toast({
-          title: "Success",
-          description: "Ticket saved successfully.",
-        });
-      } catch (error: any) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message || "Failed to save ticket.",
-        });
-      } finally {
-        setIsSaving(false);
-      }
-    }
-  };
 
   if (!isClient) {
     return null; 
@@ -124,14 +75,6 @@ export default function ETicketManager() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={handleSaveTicket} variant="outline" disabled={isSaving}>
-              {isSaving ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
-              Save Ticket
-            </Button>
             <PrintButton />
           </div>
         </header>

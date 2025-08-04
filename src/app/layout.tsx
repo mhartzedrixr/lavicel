@@ -1,7 +1,5 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import {AppSidebar} from '@/components/app-sidebar';
-import AuthProvider from '@/components/auth-provider';
 
 export const metadata: Metadata = {
   title: 'LaVicel Travel and Tours',
@@ -28,12 +26,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <AuthProvider>
-          <div className="flex">
-            <AppSidebar />
-            <main className="flex-1">{children}</main>
-          </div>
-        </AuthProvider>
+        <main>{children}</main>
       </body>
     </html>
   );
