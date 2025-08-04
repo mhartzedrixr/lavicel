@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '@/lib/firebase';
@@ -16,8 +16,13 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +45,10 @@ export default function SignupPage() {
       });
     }
   };
+  
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-50">

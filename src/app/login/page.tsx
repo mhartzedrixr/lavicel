@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '@/lib/firebase';
@@ -14,8 +14,13 @@ import { useToast } from '@/hooks/use-toast';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +35,10 @@ export default function LoginPage() {
       });
     }
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-50">
