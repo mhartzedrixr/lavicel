@@ -7,7 +7,7 @@ import ETicketForm from "@/components/eticket-form";
 import ETicketPreview from "@/components/eticket-preview";
 import { Button } from "@/components/ui/button";
 import { Printer, Plane } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
@@ -44,6 +44,12 @@ const defaultValues: ETicketData = {
 };
 
 export default function ETicketManager() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const methods = useForm<ETicketData>({
     resolver: zodResolver(eTicketSchema),
     defaultValues,
@@ -52,6 +58,10 @@ export default function ETicketManager() {
   const handlePrint = () => {
     window.print();
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <FormProvider {...methods}>
