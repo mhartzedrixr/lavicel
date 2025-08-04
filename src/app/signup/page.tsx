@@ -11,6 +11,7 @@ import {Card, CardHeader, CardTitle, CardContent, CardFooter} from '@/components
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { createUser } from '@/app/actions/tickets';
 
 
 export default function SignupPage() {
@@ -38,7 +39,10 @@ export default function SignupPage() {
     }
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Now create the user in Firestore
+      await createUser(userCredential.user.uid, userCredential.user.email);
+      
       toast({
         title: 'Success',
         description: 'Account created successfully! Please log in.',

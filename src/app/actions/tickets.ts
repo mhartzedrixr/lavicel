@@ -13,14 +13,9 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
 let adminApp: App;
 
 if (getApps().length === 0) {
-  if (serviceAccount) {
     adminApp = initializeApp({
       credential: cert(serviceAccount),
     });
-  } else {
-    // This will run on Vercel/Firebase Hosting if the env var is set there
-    adminApp = initializeApp();
-  }
 } else {
   adminApp = getApps()[0];
 }
@@ -41,9 +36,20 @@ async function getUserId(idToken: string) {
      if (error.code === 'auth/id-token-expired') {
       throw new Error('Auth token expired. Please log in again.');
     }
+     if (error.code === 'auth/argument-error') {
+        throw new Error('Invalid auth token');
+     }
     console.error("Error verifying token: ", error);
     throw new Error('Invalid auth token');
   }
+}
+
+export async function createUser(uid: string, email: string | null) {
+  await db.collection('users').doc(uid).set({
+    uid,
+    email,
+    createdAt: new Date(),
+  });
 }
 
 export async function saveTicket(ticketData: ETicketData, idToken: string) {
