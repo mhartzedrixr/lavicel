@@ -5,10 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { eTicketSchema, type ETicketData, getUniqueId } from "@/lib/schemas";
 import ETicketForm from "@/components/eticket-form";
 import ETicketPreview from "@/components/eticket-preview";
-import { Plane } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import PrintButton from "./print-button";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { saveTicket } from "@/app/actions/tickets";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
+import { Save } from "lucide-react";
 
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
@@ -42,6 +46,8 @@ const defaultValues: ETicketData = {
 
 export default function ETicketManager() {
   const [isClient, setIsClient] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     setIsClient(true);
@@ -52,8 +58,28 @@ export default function ETicketManager() {
     defaultValues,
   });
 
+  const handleSaveTicket = async () => {
+    const isValid = await methods.trigger();
+    if (isValid && user) {
+      const data = methods.getValues();
+      try {
+        await saveTicket({...data, userId: user.uid});
+        toast({
+          title: "Success",
+          description: "Ticket saved successfully.",
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to save ticket.",
+        });
+      }
+    }
+  };
+
   if (!isClient) {
-    return null;
+    return null; 
   }
 
   return (
@@ -70,10 +96,16 @@ export default function ETicketManager() {
               data-ai-hint="logo"
             />
             <h1 className="text-2xl md:text-3xl font-bold font-headline text-primary">
-              LaVicel Travel and Tours eTicket
+              LaVicel eTicket Generator
             </h1>
           </div>
-          <PrintButton />
+          <div className="flex items-center gap-2">
+            <Button onClick={handleSaveTicket} variant="outline">
+              <Save className="mr-2 h-4 w-4" />
+              Save Ticket
+            </Button>
+            <PrintButton />
+          </div>
         </header>
         <div className="grid lg:grid-cols-2 lg:gap-12">
           <div className="no-print">
