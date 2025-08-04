@@ -18,18 +18,7 @@ export default function BookingsClient() {
       const fetchTickets = async () => {
         try {
           const idToken = await user.getIdToken();
-          const response = await fetch('/api/actions/getTickets', {
-             method: 'POST',
-             headers: {
-                Authorization: `Bearer ${idToken}`,
-             }
-          });
-
-          if (!response.ok) {
-             throw new Error('Failed to fetch tickets');
-          }
-          const fetchedTickets = await response.json();
-
+          const fetchedTickets = await getTickets(idToken);
           setTickets(fetchedTickets);
         } catch (err: any) {
           setError(err.message);
@@ -84,7 +73,3 @@ export default function BookingsClient() {
     </div>
   );
 }
-
-// We need an API route to proxy our server action call with auth
-// This is a workaround for calling server actions from client components
-// that need authentication.

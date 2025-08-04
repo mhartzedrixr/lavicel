@@ -63,16 +63,17 @@ export default function ETicketManager() {
     if (isValid && user) {
       const data = methods.getValues();
       try {
-        await saveTicket({...data, userId: user.uid});
+        const idToken = await user.getIdToken();
+        await saveTicket({...data, userId: user.uid}, idToken);
         toast({
           title: "Success",
           description: "Ticket saved successfully.",
         });
-      } catch (error) {
+      } catch (error: any) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to save ticket.",
+          description: error.message || "Failed to save ticket.",
         });
       }
     }

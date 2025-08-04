@@ -3,7 +3,6 @@
 import {initializeApp, getApps, cert} from 'firebase-admin/app';
 import {getFirestore} from 'firebase-admin/firestore';
 import {eTicketSchema, type ETicketData} from '@/lib/schemas';
-import { headers } from 'next/headers';
 import { getAuth } from 'firebase-admin/auth';
 
 const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
@@ -18,8 +17,7 @@ if (getApps().length === 0) {
 
 const db = getFirestore();
 
-async function getUserId() {
-  const idToken = headers().get('Authorization')?.split('Bearer ')[1];
+async function getUserId(idToken: string) {
   if (!idToken) {
     throw new Error('User not authenticated');
   }
@@ -31,9 +29,9 @@ async function getUserId() {
   }
 }
 
-export async function saveTicket(ticketData: ETicketData) {
+export async function saveTicket(ticketData: ETicketData, idToken: string) {
   const parsedData = eTicketSchema.parse(ticketData);
-  const userId = await getUserId();
+  const userId = await getUserId(idToken);
   
   if (parsedData.userId !== userId) {
       throw new Error("User ID mismatch");
@@ -42,8 +40,8 @@ export async function saveTicket(ticketData: ETicketData) {
   await db.collection('tickets').add(parsedData);
 }
 
-export async function getTickets(): Promise<(ETicketData & {id: string})[]> {
-  const userId = await getUserId();
+export async function getTickets(idToken: string): Promise<(ETicketData & {id: string})[]> {
+  const userId = await getUserId(idToken);
   const snapshot = await db.collection('tickets').where('userId', '==', userId).get();
   
   if (snapshot.empty) {
