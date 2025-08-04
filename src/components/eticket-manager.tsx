@@ -63,7 +63,7 @@ export default function ETicketManager() {
         <header className="mb-8 flex justify-between items-center no-print">
           <div className="flex items-center gap-3">
             <Image 
-              src="https://placehold.co/40x40.png"
+              src="logo.png"
               alt="Company Logo"
               width={40}
               height={40}

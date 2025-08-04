@@ -30,7 +30,7 @@ export default function ETicketPreview() {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
              <Image 
-              src="https://placehold.co/32x32.png"
+              src="logo.png"
               alt="Company Logo"
               width={32}
               height={32}
