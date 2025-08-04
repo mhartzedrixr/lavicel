@@ -12,7 +12,7 @@ import React, { useState, useEffect } from "react";
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
   ticketNumber: "123-4567890123",
-  airline: "LAVICEL AIRLINES",
+  airline: "LAVICEL TRAVEL AND TOURS",
   ticketingInfo: "ONLINE/25JUL24",
   referenceNumber: "ABCDEF",
   itinerary: [
@@ -70,7 +70,7 @@ export default function ETicketManager() {
           <div className="flex items-center gap-3">
             <Plane className="h-8 w-8 text-primary" />
             <h1 className="text-2xl md:text-3xl font-bold font-headline text-primary">
-              Lavicel eTicket
+              LaVicel Travel and Tours eTicket
             </h1>
           </div>
           <Button onClick={handlePrint} variant="default" size="lg">

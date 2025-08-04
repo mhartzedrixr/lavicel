@@ -70,7 +70,7 @@ export default function ETicketForm() {
                   <FormItem>
                     <FormLabel>Airline</FormLabel>
                     <FormControl>
-                      <Input placeholder="LAVICEL AIRLINES" {...field} />
+                      <Input placeholder="LAVICEL TRAVEL AND TOURS" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

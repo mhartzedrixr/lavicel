@@ -30,7 +30,7 @@ export default function ETicketPreview() {
           <div className="flex items-center gap-2">
             <Plane className="h-6 w-6 text-primary" />
             <span className="font-headline text-xl font-bold text-primary">
-              {data.airline || "LAVICEL AIRLINES"}
+              {data.airline || "LAVICEL TRAVEL AND TOURS"}
             </span>
           </div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
