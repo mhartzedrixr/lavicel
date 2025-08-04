@@ -29,8 +29,7 @@ async function getUserId(idToken: string) {
     throw new Error('User not authenticated');
   }
   try {
-    const checkRevoked = true;
-    const decodedToken = await authAdmin.verifyIdToken(idToken, checkRevoked);
+    const decodedToken = await authAdmin.verifyIdToken(idToken);
     return decodedToken.uid;
   } catch (error: any) {
      if (error.code === 'auth/id-token-expired') {
@@ -53,8 +52,8 @@ export async function createUser(uid: string, email: string | null) {
 }
 
 export async function saveTicket(ticketData: ETicketData, idToken: string) {
-  const parsedData = eTicketSchema.parse(ticketData);
   const userId = await getUserId(idToken);
+  const parsedData = eTicketSchema.parse({ ...ticketData, userId });
   
   if (parsedData.userId !== userId) {
       throw new Error("User ID mismatch");

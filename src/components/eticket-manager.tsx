@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { saveTicket } from "@/app/actions/tickets";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
-import { Save } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
 
 const defaultValues: ETicketData = {
   passengerName: "JOHN DOE",
@@ -46,6 +46,7 @@ const defaultValues: ETicketData = {
 
 export default function ETicketManager() {
   const [isClient, setIsClient] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -61,10 +62,11 @@ export default function ETicketManager() {
   const handleSaveTicket = async () => {
     const isValid = await methods.trigger();
     if (isValid && user) {
+      setIsSaving(true);
       const data = methods.getValues();
       try {
         const idToken = await user.getIdToken();
-        await saveTicket({...data, userId: user.uid}, idToken);
+        await saveTicket({ ...data, userId: user.uid }, idToken);
         toast({
           title: "Success",
           description: "Ticket saved successfully.",
@@ -75,6 +77,8 @@ export default function ETicketManager() {
           title: "Error",
           description: error.message || "Failed to save ticket.",
         });
+      } finally {
+        setIsSaving(false);
       }
     }
   };
@@ -101,8 +105,12 @@ export default function ETicketManager() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={handleSaveTicket} variant="outline">
-              <Save className="mr-2 h-4 w-4" />
+            <Button onClick={handleSaveTicket} variant="outline" disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
               Save Ticket
             </Button>
             <PrintButton />
