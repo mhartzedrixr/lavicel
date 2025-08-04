@@ -181,7 +181,7 @@ export default function ETicketForm() {
                 </div>
                 
                 <div className="p-2 border rounded-md">
-                  <p className="text-sm font-medium mb-2">Departure</p>
+                  <p className="text-sm font-medium mb-2 text-primary">Departure</p>
                   <div className="grid md:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
@@ -226,7 +226,7 @@ export default function ETicketForm() {
                 </div>
 
                 <div className="p-2 border rounded-md">
-                   <p className="text-sm font-medium mb-2">Arrival</p>
+                   <p className="text-sm font-medium mb-2 text-primary">Arrival</p>
                   <div className="grid md:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
